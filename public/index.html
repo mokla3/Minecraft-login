@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Minecraft Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1e1e2f;
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .container {
+      background: #2e2e40;
+      border-radius: 15px;
+      max-width: 400px;
+      margin: auto;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      color: #4ee44e;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #4ee44e;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #3bcf3b;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #88ff88;
+    }
+
+    code {
+      background: #444;
+      padding: 2px 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Minecraft Login</h1>
+    <p>Enter your Minecraft username to receive a login code.</p>
+    <input id="username" type="text" placeholder="Minecraft Username" />
+    <br />
+    <button onclick="getCode()">Get Login Code</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    async function getCode() {
+      const username = document.getElementById("username").value.trim();
+      if (!username) {
+        alert("Please enter a username.");
+        return;
+      }
+
+      const res = await fetch("/request-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        document.getElementById("result").innerHTML =
+          `Your login code is: <b>${data.code}</b><br>Type <code>/login-code ${data.code}</code> in Minecraft.`;
+      } else {
+        document.getElementById("result").textContent = "Error creating login code.";
+      }
+    }
+  </script>
+</body>
+</html>
